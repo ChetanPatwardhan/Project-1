@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servo Motor Angle of Attack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: rgb(212, 212, 212);
+        }
+        .container {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .panel {
+            margin-left: 20px;
+        }
+        .panel h2 {
+            margin: 0;
+        }
+        .panel .heading-container {
+            display: flex;
+            align-items: center;
+        }
+        .panel .heading-container div {
+            margin-right: 20px;
+        }
+        .panel .input-container {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+        .panel .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .panel .input-row label {
+            margin-right: 10px;
+            width: 60px; /* Adjust width to fit label */
+            align-items: center;
+        }
+        .panel .input-row input {
+            padding: 5px;
+            width: 100px;
+            text-align: center; /* Center text horizontally */
+            border: 1px solid #1b1a1a; /* Border for individual inputs */
+            border-radius: 3px; /* Optional: rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Servo Motor Angle of Attack</h4>
+
+    <div class="container">
+        <div class="panel">
+            <div class="heading-container">
+                <div><h5>No. of Motor</h5></div>&nbsp;&nbsp;&nbsp;
+                <div><h5>Angle of Attack</h5></div>
+            </div>
+            <div class="input-container">
+                <div class="input-row">
+                    <label for="servo1">Servo 1</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" id="servo1" name="servo1" placeholder="0°">
+                </div>
+                <div class="input-row">
+                    <label for="servo2">Servo 2</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" id="servo2" name="servo2" placeholder="0°">
+                </div>
+                <div class="input-row">
+                    <label for="servo3">Servo 3</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" id="servo3" name="servo3" placeholder="0°">
+                </div>
+                <div class="input-row">
+                    <label for="servo4">Servo 4</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" id="servo4" name="servo4" placeholder="0°">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
