@@ -1,0 +1,41 @@
+#include <Servo.h>
+
+Servo Fin1;
+Servo Fin2;
+Servo Fin3;
+Servo Fin4;
+
+int pos = 0;
+
+void setup() {
+  Fin1.attach(9);
+  Fin2.attach(10);
+  Fin3.attach(11);
+  Fin4.attach(12);
+  Serial.begin(9600);
+  Serial.println("Initializing Fin Test");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n');
+    if (command == "rotate") {
+      for (pos = 0; pos <= 180; pos += 1) {
+        Fin1.write(pos);
+        Fin2.write(pos);
+        Fin3.write(pos);
+        Fin4.write(pos);
+        Serial.println(pos);
+        delay(15);
+      }
+      for (pos = 180; pos >= 45; pos -= 1) {
+        Fin1.write(pos);
+        Fin2.write(pos);
+        Fin3.write(pos);
+        Fin4.write(pos);
+        Serial.println(pos);
+        delay(15);
+      }
+    }
+  }
+}
