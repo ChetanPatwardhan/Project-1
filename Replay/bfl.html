@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Transfer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-image: url('https://www.punekarnews.in/wp-content/uploads/2020/03/kalyani-group-768x506.jpg'); /* Replace with the path to your image */
+            background-size: cover; /* Ensures the image covers the entire background */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            background-attachment: fixed; /* Keeps the image fixed when scrolling */
+            color: black; /* Ensures text remains visible */
+        }
+        
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 6px;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: white; /* Semi-transparent background for better readability */
+        }
+
+        .header button {
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .header button:hover {
+            background-color: whitesmoke;
+            color: black;
+        }
+
+        .header .title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header .title span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Divider Line */
+        .divider {
+            border-top: 2px solid black;
+        }
+
+        /* Container for both panels */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            width: 48%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .left-panel button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 190px;
+        }
+
+        .left-panel button:hover {
+            background-color: white;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 48%;
+            padding: 20px;
+            text-align: center;
+           
+            border-radius: 8px;
+        }
+
+        /* Vertical Divider between the panels */
+        .vertical-divider {
+            width: 100px;
+            background-color: black;
+        }
+
+        /* Footer */
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+            font-weight: bold;
+        }
+
+        /* Footer Divider */
+        .footer-divider {
+            position: fixed;
+            bottom: 38px;
+            width: 100%;
+            border-top: 2px solid black;
+        }
+
+        .styled-button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 190px;
+        }
+
+        .styled-button:hover {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <div class="header">
+        <!-- Left: Settings Button -->
+        <button><b><a href="setting1.html" style="text-decoration:none;">Settings</a></b></button>
+        
+        <!-- Center: Title -->
+        <div class="title">
+            <span>Bharat Forge</span>
+        </div>
+        
+        <!-- Right: AUV Text -->
+        <div><img src="https://companieslogo.com/img/orig/BHARATFORG.NS-ed04c2f6.png?t=1720244491" width="16" height="16">AUV</div>
+    </div>
+    
+    <!-- Divider Line -->
+    <div class="divider"></div>
+
+    <!-- Panels Container -->
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <button onclick="showMissionButtons()">Mission</button>
+            <button onclick="showTestButtons()">Test</button>
+            <button onclick="showReplayButton()">Replay</button>
+        </div>
+
+        <!-- Vertical Divider Line -->
+        <div class="vertical-divider" style="width: 2px; height: 850px;"></div>
+
+        <!-- Right Panel -->
+        <div class="right-panel" id="rightPanel">
+            <!-- Buttons will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Divider Line Above Footer -->
+    <div class="footer-divider"></div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span>Battery: 85%</span>
+        <span>Mode: Autonomous</span>
+        <span>Host: 192.168.0.1</span>
+        <span>GPS: 14.764561, 74.147303</span>
+    </div>
+
+    <script>
+        function showMissionButtons() {
+            const rightPanel = document.getElementById('rightPanel');
+            rightPanel.innerHTML = ` 
+                <button class="styled-button" onclick="openMission()">Open Mission</button>
+                <button class="styled-button" onclick="createMission()">Create New Mission</button>
+            `;
+        }
+    
+        function showTestButtons() {
+            const rightPanel = document.getElementById('rightPanel');
+            rightPanel.innerHTML = ` 
+                <button class="styled-button" onclick="openFile('finTest')">Fin Test</button>
+                <button class="styled-button" onclick="openFile('propellerTest')">Propeller Test</button>
+                <button class="styled-button" onclick="openFile('pressureSensorTest')">Pressure Sensor Test</button>
+            `;
+        }
+    
+        function showReplayButton() {
+            const rightPanel = document.getElementById('rightPanel');
+            rightPanel.innerHTML = ` 
+                <button class="styled-button" onclick="loadMissionFile()">Load Mission File</button>
+            `;
+        }
+    
+        // Function to handle file selection
+        function openFile(testType) {
+            const input = document.createElement('input');
+            input.type = 'file';  // Allow file selection
+            input.accept = '*';   // Accept any type of file (you can restrict it if needed)
+            input.style.display = 'none'; // Hide the input field
+    
+            // Once the file is selected
+            input.onchange = () => {
+                alert(`${testType} file selected: ${input.files[0].name}`);
+            };
+    
+            document.body.appendChild(input);  // Add the input to the document
+            input.click();  // Trigger the file input dialog
+            document.body.removeChild(input); // Clean up by removing the input element
+        }
+    
+        // Function for mission-related file input (for the "Open Mission" button)
+        function openMission() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '*'; // You can adjust to accept specific file types
+            input.style.display = 'none';
+            input.onchange = () => alert(`File selected: ${input.files[0].name}`);
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+        }
+    
+        // Function for creating a new mission
+        function createMission() {
+            alert('Create New Mission button clicked.');
+        }
+    
+        // Function for loading a mission file
+        function loadMissionFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '*'; // You can adjust to accept specific file types
+            input.style.display = 'none';
+            input.onchange = () => alert(`File selected: ${input.files[0].name}`);
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+        }
+    </script>
+
+</body>
+</html>
