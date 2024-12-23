@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUV Issue Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+           
+        }
+
+        .panel {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .left-panel {
+            width: 30%;
+            background-color: #f4f4f4;
+            border-right: 1px solid #ddd;
+        }
+
+        .right-panel {
+            width: 70%;
+            background-color: #fff;
+            position: relative;
+        }
+
+        .status-box {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select, input, button, textarea {
+            margin: 10px 0;
+            padding: 5px;
+            width: 100%;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel left-panel">
+        <h3>Register Product</h3>
+
+        <label for="productType">Select Product:</label>
+        <select id="productType">
+            <option value="">Select</option>
+            <option value="AUV">AUV</option>
+            <option value="SCM">SCM</option>
+        </select>
+
+        <div id="auvSection" class="hidden">
+            <label for="auvNumber">Register AUV No.:</label>
+            <input type="text" id="auvNumber" placeholder="Enter AUV Number">
+            <button id="saveAUV">Save AUV No.</button>
+        </div>
+
+        <label for="issueType">Select Type:</label>
+        <select id="issueType">
+            <option value="">Select</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Software">Software</option>
+        </select>
+
+        
+        
+        <label for="registeredAUV">Select Registered AUV No.:</label>
+        <select id="registeredAUV">
+            <option value="">Select</option>
+        </select>
+
+        <button id="registerIssue" class="hidden">Register Issue</button>
+    </div>
+    
+    <div class="panel right-panel">
+        <div class="status-box">
+            <p>Pending: 0</p>
+            <p>Completed: 0</p>
+        </div>
+        <div id="softwareReportForm" class="hidden">
+            <h3>Register Software Issue</h3>
+        
+            <label for="selectedSoftwareAUV">Registered AUV No.:</label>
+            <input type="text" id="selectedSoftwareAUV" readonly>
+        
+            <label for="softwareDate">Date:</label>
+            <input type="date" id="softwareDate" readonly>
+        
+            <label for="softwareName">Software Name:</label>
+            <input type="text" id="softwareName" placeholder="Enter Software Name">
+        
+            <label for="softwareIssueDescription">Issue Description:</label>
+            <textarea id="softwareIssueDescription" rows="3" placeholder="Enter Issue Description"></textarea>
+        
+            <button id="generateSoftwarePDF">Generate Software PDF</button>
+        </div>
+        
+        
+        <div id="issueForm" class="hidden">
+            <h3>Register Hardware Issue</h3>
+
+            <label for="selectedAUV">Registered AUV No.:</label>
+            <input type="text" id="selectedAUV" readonly>
+
+            <label for="issueDate">Date:</label>
+            <input type="date" id="issueDate" value="${new Date().toISOString().split('T')[0]}" readonly>
+
+            <label for="issueSection">Issue Section:</label>
+            <select id="issueSection">
+                <option value="">-- Select --</option>
+                <option value="Front">Front Section</option>
+                <option value="Middle">Middle Section</option>
+                <option value="Flang">Flang Section</option>
+                <option value="Battery">Battery Section</option>
+                <option value="Rear">Rear Section</option>
+            </select>
+
+            <div id="issueDetails" class="hidden"></div>
+
+            <label for="issueDescription">Issue Description:</label>
+            <textarea id="issueDescription" rows="3"></textarea>
+
+            <label for="actionTaken">Action Taken:</label>
+            <textarea id="actionTaken" rows="3"></textarea>
+
+            <button id="generatePDF" >Generate PDF</button>
+        </div>
+    </div>
+    
+    <script>
+        // Set today's date dynamically
+        document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+    </script>
+    <script>
+        const productType = document.getElementById("productType");
+        const auvSection = document.getElementById("auvSection");
+        const auvNumberInput = document.getElementById("auvNumber");
+        const saveAUVButton = document.getElementById("saveAUV");
+        const registeredAUVSelect = document.getElementById("registeredAUV");
+        const issueType = document.getElementById("issueType");
+        const hardwareSection = document.getElementById("hardwareSection");
+        const softwareSection = document.getElementById("softwareSection");
+        const registerIssueButton = document.getElementById("registerIssue");
+        const issueForm = document.getElementById("issueForm");
+
+    
+        const selectedAUV = document.getElementById("selectedAUV");
+        const issueSection = document.getElementById("issueSection");
+        const issueDetails = document.getElementById("issueDetails");
+
+        issueType.addEventListener("change", () => {
+        // Show/Hide based on the selected issue type
+        const type = issueType.value;
+        hardwareSection.classList.toggle("hidden", type !== "Hardware");
+        softwareSection.classList.toggle("hidden", type !== "Software");
+    });
+
+        let registeredAUVs = [];
+
+        productType.addEventListener("change", () => {
+            auvSection.classList.toggle("hidden", productType.value !== "AUV");
+        });
+
+        saveAUVButton.addEventListener("click", () => {
+            const auvNumber = auvNumberInput.value.trim();
+            if (!auvNumber) {
+                alert("Please enter a valid AUV number.");
+                return;
+            }
+
+            if (!registeredAUVs.includes(auvNumber)) {
+                registeredAUVs.push(auvNumber);
+                const option = document.createElement("option");
+                option.value = auvNumber;
+                option.textContent = auvNumber;
+                registeredAUVSelect.appendChild(option);
+                alert(`AUV No. ${auvNumber} has been registered.`);
+            } else {
+                alert("This AUV number is already registered.");
+            }
+            auvNumberInput.value = "";
+        });
+        
+        registeredAUVSelect.addEventListener("change", () => {
+            registerIssueButton.classList.toggle("hidden", !registeredAUVSelect.value);
+        });
+
+        registerIssueButton.addEventListener("click", () => {
+    // Hide all forms initially
+    issueForm.classList.add("hidden");
+    const softwareReportForm = document.getElementById("softwareReportForm");
+
+    // Get selected issue type
+    const selectedType = issueType.value;
+
+    // Handle Hardware Form
+    if (selectedType === "Hardware") {
+        issueForm.classList.remove("hidden"); // Show hardware form
+        selectedAUV.value = registeredAUVSelect.value; // Set AUV number
+    } 
+    // Handle Software Form
+    else if (selectedType === "Software") {
+        softwareReportForm.classList.remove("hidden"); // Show software form
+        const selectedSoftwareAUV = document.getElementById("selectedSoftwareAUV");
+        selectedSoftwareAUV.value = registeredAUVSelect.value; // Set AUV number
+    } 
+    // Handle Invalid Selection
+    else {
+        alert("Please select a valid issue type!");
+    }
+});
+
+
+
+
+        issueSection.addEventListener("change", () => {
+    issueDetails.innerHTML = "";
+    issueDetails.classList.add("hidden");
+
+    const issues = {
+        Front: ["-- Select Issue --", "Obstacle avoidance system (OAS)", "Acoustic Modem", "SDA 14", "Backup Li-ion Battery","INS","O-Rings","Nylon Wire", "Body Damage"],
+        Middle: ["-- Select Issue --", "Doppler Velocity Logger (DVL)", "Side Scan Sonar (SSS)", "Navigation sensors","O-Rings","Nylon Wire", "Body Damage"],
+        Flang: ["-- Select Issue --", "Mast", "Pressure sensor", "Pressure valve", "Subconn connector","O-Rings","Nylon Wire", "Body Damage"],
+        Battery: ["-- Select Issue --", "Safety valves", "Battery Management System","O-Rings","Nylon Wire", "Body Damage"],
+        Rear: ["-- Select Issue --", "Motor controller", "Bush", "Propeller", "Shaft", "Propulsion System (Nozzle)", "Fins", "Duct", "Bearing", "Mechanical Seal", "Servo Motor", "Rudder Shaft", "Propeller Shaft", "Stator", "Automatic Identification System (AIS)", "Iridium antenna", "O-Rings","Nylon Wire", "Body Damage"]
+    };
+
+    const selectedSection = issueSection.value;
+    if (issues[selectedSection]) {
+        const select = document.createElement("select");
+        select.id = "specificIssue"; // Add an ID for the specific issue dropdown
+        select.innerHTML = issues[selectedSection].map(issue => `<option value="${issue}">${issue}</option>`).join("");
+        issueDetails.appendChild(select);
+        issueDetails.classList.remove("hidden");
+    }
+    });
+
+
+    document.getElementById("generatePDF").addEventListener("click", () => {
+    const { jsPDF } = window.jspdf; // Ensure jsPDF is included in your HTML
+    const doc = new jsPDF();
+
+    // Get values from the form
+    const auvNo = document.getElementById("selectedAUV").value;
+    const issueDate = document.getElementById("issueDate").value;
+    const issueSection = document.getElementById("issueSection").value;
+    const specificIssueDropdown = document.getElementById("specificIssue");
+    const specificIssue = specificIssueDropdown ? specificIssueDropdown.value : "N/A"; // Fallback if not selected
+    const issueDescription = document.getElementById("issueDescription").value;
+    const actionTaken = document.getElementById("actionTaken").value;
+
+    // Add text to the PDF
+    doc.setFontSize(16);
+    doc.text("AUV Issue Report", 105, 10, { align: "center" });
+    doc.setFontSize(12);
+
+    doc.text(`AUV Number: ${auvNo}`, 10, 20);
+    doc.text(`Issue Date: ${issueDate}`, 10, 30);
+    doc.text(`Issue Section: ${issueSection}`, 10, 40);
+    doc.text(`Specific Issue: ${specificIssue}`, 10, 50);
+
+    doc.text("Issue Description:", 10, 60);
+    doc.text(issueDescription || "N/A", 10, 70, { maxWidth: 190 });
+
+    doc.text("Action Taken:", 10, 90);
+    doc.text(actionTaken || "N/A", 10, 100, { maxWidth: 190 });
+
+    // Save the PDF
+    doc.save(`AUV_Issue_Report_${auvNo}.pdf`);
+});
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>// Function to handle Software Report form visibility and populate fields
+        issueType.addEventListener("change", () => {
+            const type = issueType.value;
+            hardwareSection.classList.toggle("hidden", type !== "Hardware");
+            softwareSection.classList.toggle("hidden", type !== "Software");
+        
+            // Show/Hide specific report forms
+            issueForm.classList.add("hidden");
+            softwareReportForm.classList.add("hidden");
+        });
+        
+        registerIssueButton.addEventListener("click", () => {
+            selectedAUV.value = registeredAUVSelect.value;
+        
+            // Show the correct form based on selected issue type
+            if (issueType.value === "Software") {
+                softwareReportForm.classList.remove("hidden");
+                issueForm.classList.add("hidden");
+        
+                // Set current date for the software report
+                const currentDate = new Date().toISOString().split("T")[0];
+                document.getElementById("softwareDate").value = currentDate;
+                document.getElementById("selectedSoftwareAUV").value = registeredAUVSelect.value;
+            } else if (issueType.value === "Hardware") {
+                issueForm.classList.remove("hidden");
+                softwareReportForm.classList.add("hidden");
+            }
+        });
+        
+        // Generate Software PDF
+        document.getElementById("generateSoftwarePDF").addEventListener("click", () => {
+            const { jsPDF } = window.jspdf; // Ensure jsPDF is included in your HTML
+            const doc = new jsPDF();
+        
+            // Get values from the form
+            const auvNo = document.getElementById("selectedSoftwareAUV").value;
+            const date = document.getElementById("softwareDate").value;
+            const softwareName = document.getElementById("softwareName").value;
+            const issueDescription = document.getElementById("softwareIssueDescription").value;
+        
+            // Add text to the PDF
+            doc.setFontSize(16);
+            doc.text("Software Issue Report", 105, 10, { align: "center" });
+            doc.setFontSize(12);
+        
+            doc.text(`AUV Number: ${auvNo}`, 10, 20);
+            doc.text(`Date: ${date}`, 10, 30);
+            doc.text(`Software Name: ${softwareName}`, 10, 40);
+        
+            doc.text("Issue Description:", 10, 50);
+            doc.text(issueDescription || "N/A", 10, 60, { maxWidth: 190 });
+        
+            // Save the PDF
+            doc.save(`Software_Issue_Report_${auvNo}.pdf`);
+        });
+        </script>
+</body>
+</html>
