@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Interface</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+</head>
+<style>
+    /* style.css */
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('https://www.punekarnews.in/wp-content/uploads/2020/03/kalyani-group-768x506.jpg'); /* Replace with your image URL */
+    background-size: cover; /* Ensures the image covers the entire background */    
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed; /* Keeps the image fixed during scrolling */
+    background-position: center; /* Centers the image */
+    width: 100%; /* Ensures the background takes the full width */
+    height: 95vh; /* Ensures the background takes the full height of the viewport */
+    background-color: #f4f4f4; /* Fallback color if the image doesn't load */
+    color: black; /* Ensures text remains visible */
+}
+
+
+
+.header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 6px;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: white; /* Semi-transparent background for better readability */
+        }
+
+        .header button {
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .header button:hover {
+            background-color: whitesmoke;
+            color: black;
+        }
+
+        .header .title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header .title span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Divider Line */
+        .divider {
+            border-top: 2px solid black;
+        }
+
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.panel {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.panel:last-child {
+    border-right: none;
+}
+
+button {
+    background-color:  #4c7faf;
+            color: white;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 80%;
+            margin-top: 10px;
+}
+button:hover {
+            background-color: #455da0;
+        }
+
+input, select, textarea {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 80%;
+    box-sizing: border-box;
+}
+
+textarea {
+    height: 100px;
+}
+
+.hidden {
+    display: none;
+}
+.issueDetailsDisplay{
+    background-color: black;
+}
+.p{
+    color: black;
+}
+ /* Footer */
+ .footer {
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+            font-weight: bold;
+            color: black;
+        }
+
+        /* Footer Divider */
+        .footer-divider {
+            position: fixed;
+            bottom: 38px;
+            width: 100%;
+            border-top: 2px solid black;
+        }
+
+</style>
+<body>
+     <!-- Top Header -->
+     <div class="header">
+        <!-- Left: Settings Button -->
+        
+        <!-- Center: Title -->
+        <div class="title">
+            <span>Bharat Forge</span>
+        </div>
+        
+        <!-- Right: AUV Text -->
+        <div><img src="https://companieslogo.com/img/orig/BHARATFORG.NS-ed04c2f6.png?t=1720244491" width="16" height="16">AUV</div>
+    </div>
+    
+    <!-- Divider Line -->
+    <div class="divider"></div>
+
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="panel left">
+            <button id="registerProductBtn">Register Product</button>
+            <div id="productOptions" class="hidden">
+                <button id="auvBtn">AUV</button>
+                <button id="scmBtn">SCM</button>
+                <div id="registerAuv" class="hidden">
+                    <p class="chetan">AUV Details :</p>
+                    <input type="text" id="auvNoInput" placeholder="Enter AUV No.:">
+                    <select id="auvNameInput">
+                        
+                        <option value="" disabled selected>-- Select Type --</option>
+                        <option value="Hardware">Hardware Type</option>
+                        <option value="Software">Software Type</option>
+                    </select>
+                    <button id="saveAuvBtn">Save</button>
+                </div>                
+            </div>
+        </div>
+
+        <!-- Middle Panel -->
+        <div class="panel middle">
+            <button id="registerIssueBtn">Register Issue</button>
+            <div id="issueOptions" class="hidden">
+                <button id="issueAuvBtn">AUV</button>
+                <button id="issueScmBtn">SCM</button>
+                
+                <div id="registerIssueForm" class="hidden">
+                    <p class="chetan">Select Register AUV.:</p>
+                    <select id="auvDropdown"></select>
+                   
+                    <form id="issueForm" class="hidden">
+                        <p><b>Register Issue</b></p>
+                        <p class="chetan">Date :</p>
+                        <input type="date" id="issueDate" value="${new Date().toISOString().split('T')[0]}" readonly>
+                        <p class="chetan">Select Section :</p>
+                        <select id="issueType">
+                            <option value="">-- Select Section --</option>
+                            <option value="Front">Front Section</option>
+                            <option value="Middle">Middle Section</option>
+                            <option value="Flang">Flang Section</option>
+                            <option value="Battery">Battery Section</option>
+                            <option value="Rear">Rear Section</option>
+                        </select>
+                        <p>Select Specific Issue :</p>
+                        <select id="issueDetailsDropdown" disabled>
+                            <option value="">-- Select Specific Issue --</option>
+                        </select>
+                        <label for="issueDescription">Issue Description:</label>
+                        <textarea id="issueDescription" rows="3"></textarea>
+                        <button id="saveIssueBtn">Save Issue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel right">
+            <button id="takeActionBtn" style="margin-bottom: 13px;">Take Action On Registered Issue</button>
+            <div id="actionPanel" class="hidden">
+                <label for="issueDropdown" style="margin-bottom: 13px;">Select Registered Issue:</label>
+                <select id="issueDropdown">
+                    <option value="">-- Select Registered Issue --</option>
+                </select>
+            
+                <div id="issueDetailsDisplay" style="margin-top: 10px; border: 2px solid #130e0e; padding: 13px;">
+                    <!-- Issue details will appear here -->
+                </div>
+            
+                <label for="actionDescription" style="margin-top: 10px;" >Action Taken:</label>
+                <textarea id="actionDescription" rows="4" style="width: 100%;" ></textarea>
+            
+                <button id="generatePdfBtn" style="margin-top: 10px;">Generate PDF Report</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Divider Line Above Footer -->
+    <div class="footer-divider"></div>
+
+     <!-- Footer -->
+     <div class="footer">
+        <span>Bharat Forge &#169; 2024</span>
+    </div>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    
+// Left Panel
+const registerProductBtn = document.getElementById("registerProductBtn");
+    const productOptions = document.getElementById("productOptions");
+    const auvBtn = document.getElementById("auvBtn");
+    const registerAuv = document.getElementById("registerAuv");
+    const saveAuvBtn = document.getElementById("saveAuvBtn");
+    const auvNoInput = document.getElementById("auvNoInput");
+    const auvNameInput = document.getElementById("auvNameInput");
+
+    // Middle Panel
+    const registerIssueBtn = document.getElementById("registerIssueBtn");
+    const issueOptions = document.getElementById("issueOptions");
+    const issueAuvBtn = document.getElementById("issueAuvBtn");
+    const registerIssueForm = document.getElementById("registerIssueForm");
+    const auvDropdown = document.getElementById("auvDropdown");
+    const issueForm = document.getElementById("issueForm");
+
+    // Right Panel
+    
+        const issueType = document.getElementById("issueType");
+        const issueDetailsDropdown = document.getElementById("issueDetailsDropdown");
+        const takeActionBtn = document.getElementById("takeActionBtn");
+        const actionPanel = document.getElementById("actionPanel");
+        const issueDropdown = document.getElementById("issueDropdown");
+        const issueDetailsDisplay = document.getElementById("issueDetailsDisplay");
+        const actionDescriptionInput = document.getElementById("actionDescription");
+        const generatePdfBtn = document.getElementById("generatePdfBtn");
+
+
+
+    // Data structure for the sub-options
+    const sectionIssues = {
+        Front: [
+            "Obstacle Avoidance System (OAS)",
+            "Acoustic Modem",
+            "SDA 14",
+            "INS",
+            "Backup Li-ion Battery",
+            "O-Rings",
+            "Nylon Wire", 
+            "Body Damage",
+        ],
+        Middle: [
+            "Doppler Velocity Logger (DVL)",
+            "Side Scan Sonar (SSS)",
+            "Navigation Sensors",
+            "O-Rings",
+            "Nylon Wire", 
+            "Body Damage",
+        ],
+        Flang: [
+            "Mast",
+            "Pressure Sensor",
+            "Pressure Valve",
+            "Subconn Connector",
+            "O-Rings",
+            "Nylon Wire", 
+            "Body Damage",
+        ],
+        Battery: [
+            "Safety Valves",
+            "Batteries Management System",
+            "O-Rings",
+            "Nylon Wire", 
+            "Body Damage",
+        ],
+        Rear: [
+            "Motor Controller",
+            "Bush",
+            "Propeller",
+            "Shaft",
+            "Propulsion System (Nozzle)",
+            "Fins",
+            "Duct",
+            "Bearing",
+            "Mechanical Seal",
+            "Servo Motor",
+            "Rudder Shaft",
+            "Propeller Shaft",
+            "Stator",
+            "Automatic Identification System (AIS)",
+            "Iridium Antenna",
+            "O-Rings",
+            "Nylon Wire", 
+            "Body Damage",
+        ],
+    };
+
+    // Handle the section selection
+    issueType.addEventListener("change", () => {
+        const selectedSection = issueType.value;
+
+        // Clear previous options
+        issueDetailsDropdown.innerHTML = '<option value="">-- Select Specific Issue --</option>';
+
+        if (selectedSection && sectionIssues[selectedSection]) {
+            // Enable the dropdown and populate it
+            issueDetailsDropdown.disabled = false;
+
+            sectionIssues[selectedSection].forEach((issue) => {
+                const option = document.createElement("option");
+                option.value = issue;
+                option.textContent = issue;
+                issueDetailsDropdown.appendChild(option);
+            });
+        } else {
+            // Disable the dropdown if no valid section is selected
+            issueDetailsDropdown.disabled = true;
+        }
+    });
+
+    
+ // Toggle visibility of the action panel
+    takeActionBtn.addEventListener("click", () => {
+            actionPanel.classList.toggle("hidden");
+
+         // Populate the dropdown with registered issues
+            const issues = JSON.parse(localStorage.getItem("issues") || "[]");
+            issueDropdown.innerHTML = '<option value="">-- Select Registered Issue --</option>';
+            issues.forEach((issue, index) => {
+                const option = document.createElement("option");
+                option.value = index; // Use index as unique identifier
+                option.textContent = `${issue.auvNo} - ${issue.issueDetail}`;
+                issueDropdown.appendChild(option);
+        });
+    });
+
+// Show issue details when a registered issue is selected
+        issueDropdown.addEventListener("change", () => {
+            const selectedIndex = issueDropdown.value;
+            if (selectedIndex !== "") {
+                const issues = JSON.parse(localStorage.getItem("issues") || "[]");
+                const selectedIssue = issues[selectedIndex];
+
+                // Display the issue details
+                issueDetailsDisplay.innerHTML = `
+                    <p><strong>AUV Number:</strong> ${selectedIssue.auvNo}</p>
+                    <p><strong>Date:</strong> ${selectedIssue.issueDate}</p>
+                    <p><strong>Section:</strong> ${selectedIssue.issueType}</p>
+                    <p><strong>Specific Issue:</strong> ${selectedIssue.issueDetail}</p>
+                    <p><strong>Description:</strong> ${selectedIssue.description}</p>
+                `;
+            } else {
+                issueDetailsDisplay.innerHTML = "";
+        }
+    });
+
+// Generate PDF report
+function generateStyledPDF(issueDetails) {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    // Set styles and add a header
+    pdf.setFontSize(18);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("AUV Issue Report", 105, 20, { align: "center" });
+
+    // Draw a line below the header
+    pdf.setLineWidth(0.5);
+    pdf.line(10, 25, 200, 25);
+
+    // Add issue details
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+
+    let yPosition = 40; // Start position for text
+
+    pdf.text(`AUV Number: ${issueDetails.auvNo}`, 10, yPosition);
+    yPosition += 10;
+    pdf.text(`Date: ${issueDetails.issueDate.split('T')[0]}`, 10, yPosition);
+    yPosition += 10;
+    pdf.text(`Section: ${issueDetails.issueType}`, 10, yPosition);
+    yPosition += 10;
+    pdf.text(`Specific Issue: ${issueDetails.issueDetail}`, 10, yPosition);
+    yPosition += 10;
+
+    // Multi-line text for issue description
+    pdf.setFont("helvetica", "normal");
+    const descriptionText = pdf.splitTextToSize(`Description: ${issueDetails.description}`, 180);
+    pdf.text(descriptionText, 10, yPosition);
+    yPosition += descriptionText.length * 10;
+
+    // Add action description
+    pdf.setFont("helvetica", "bold");
+    yPosition += 10;
+    pdf.text("Action Taken:", 10, yPosition);
+    pdf.setFont("helvetica", "normal");
+    yPosition += 10;
+
+    const actionText = pdf.splitTextToSize(issueDetails.actionDescription, 180);
+    pdf.text(actionText, 10, yPosition);
+
+    // Save the PDF
+    pdf.save(`${issueDetails.auvNo}_Issue_Report.pdf`);
+}
+
+// Modify the existing generatePdfBtn click event
+generatePdfBtn.addEventListener("click", () => {
+    const selectedIndex = issueDropdown.value;
+    const actionDescription = actionDescriptionInput.value;
+
+    if (selectedIndex === "" || actionDescription === "") {
+        alert("Please select an issue and provide an action description.");
+        return;
+    }
+
+    const issues = JSON.parse(localStorage.getItem("issues") || "[]");
+    const selectedIssue = issues[selectedIndex];
+
+    // Pass the selected issue details to the generateStyledPDF function
+    generateStyledPDF({
+        auvNo: selectedIssue.auvNo,
+        issueDate: selectedIssue.issueDate,
+        issueType: selectedIssue.issueType,
+        issueDetail: selectedIssue.issueDetail,
+        description: selectedIssue.description,
+        actionDescription: actionDescription,
+    });
+
+    // Remove the issue from localStorage
+    issues.splice(selectedIndex, 1);
+    localStorage.setItem("issues", JSON.stringify(issues));
+
+    // Update the dropdown
+    issueDropdown.innerHTML = '<option value="">-- Select Registered Issue --</option>';
+    issues.forEach((issue, index) => {
+        const option = document.createElement("option");
+        option.value = index; // Use updated index
+        option.textContent = `${issue.auvNo} - ${issue.issueDetail}`;
+        issueDropdown.appendChild(option);
+    });
+
+    // Clear the displayed details and action description
+    issueDetailsDisplay.innerHTML = "";
+    actionDescriptionInput.value = "";
+
+    alert("PDF Report generated successfully!");
+      });
+    });
+    
+
+// Toggle Visibility for Register Product
+    registerProductBtn.addEventListener("click", () => productOptions.classList.toggle("hidden"));
+    auvBtn.addEventListener("click", () => registerAuv.classList.toggle("hidden"));
+
+// Save AUV and update dropdown
+    saveAuvBtn.addEventListener("click", () => {
+        const auvNo = auvNoInput.value;
+        const auvName = auvNameInput.value;
+
+        if (auvNo && auvName) {
+            const auvs = JSON.parse(localStorage.getItem("auvs") || "[]");
+            auvs.push({ auvNo, auvName });
+            localStorage.setItem("auvs", JSON.stringify(auvs));
+
+            // Update dropdown
+            const option = document.createElement("option");
+            option.value = auvNo;
+            option.textContent = `${auvNo} - ${auvName}`;
+            auvDropdown.appendChild(option);
+
+            alert("AUV saved successfully!");
+            auvNoInput.value = "";
+            auvNameInput.value = "";
+        } else {
+            alert("Please enter AUV No and Name.");
+    }
+  });
+
+// Toggle Visibility for Register Issue
+    registerIssueBtn.addEventListener("click", () => {
+        issueOptions.classList.toggle("hidden");
+        // Show AUV button after "Register Issue" button is clicked
+        issueAuvBtn.classList.remove("hidden");
+    });
+
+// When AUV button is clicked, show the issue registration form
+issueAuvBtn.addEventListener("click", () => {
+        registerIssueForm.classList.remove("hidden");
+        // Populate AUV dropdown with saved AUVs
+        const auvs = JSON.parse(localStorage.getItem("auvs") || "[]");
+        auvDropdown.innerHTML = '<option value="">-- Select Register AUV --</option>';
+        auvs.forEach((auv) => {
+            const option = document.createElement("option");
+            option.value = auv.auvNo;
+            option.textContent = `${auv.auvNo} - ${auv.auvName}`;
+            auvDropdown.appendChild(option);
+        });
+    });
+
+// Show issue details dropdown when AUV is selected
+    auvDropdown.addEventListener("change", () => {
+        issueForm.classList.remove("hidden");
+    });
+
+    
+
+// Save Issue and Update Dropdown
+const saveIssueBtn = document.getElementById("saveIssueBtn");
+
+saveIssueBtn.addEventListener("click", () => {
+    const selectedAuvNo = auvDropdown.value;
+    const issueTypeValue = issueType.value;
+    const issueDetail = issueDetailsDropdown.value;
+    const issueDescription = document.getElementById("issueDescription").value;
+
+    if (selectedAuvNo && issueTypeValue && issueDetail && issueDescription) {
+        // Save the issue to localStorage
+        const issues = JSON.parse(localStorage.getItem("issues") || "[]");
+        issues.push({
+            auvNo: selectedAuvNo,
+            issueDate:new Date,
+            issueType: issueTypeValue,
+            issueDetail: issueDetail,
+            description: issueDescription,
+        });
+        localStorage.setItem("issues", JSON.stringify(issues));
+
+        alert("Issue saved successfully!");
+
+        // Clear the form
+        issueType.value = "";
+        issueDetailsDropdown.innerHTML = '<option value="">-- Select Specific Issue --</option>';
+        issueDetailsDropdown.disabled = true;
+        document.getElementById("issueDescription").value = "";
+
+        // Update the dropdown to exclude the saved AUV
+        const auvs = JSON.parse(localStorage.getItem("auvs") || "[]");
+        const updatedAuvs = auvs.filter((auv) => auv.auvNo !== selectedAuvNo);
+        localStorage.setItem("auvs", JSON.stringify(updatedAuvs));
+
+        // Repopulate the AUV dropdown
+        auvDropdown.innerHTML = '<option value="">-- Select Register AUV --</option>';
+        updatedAuvs.forEach((auv) => {
+            const option = document.createElement("option");
+            option.value = auv.auvNo;
+            option.textContent = `${auv.auvNo} - ${auv.auvName}`;
+            auvDropdown.appendChild(option);
+        });
+    } else {
+        alert("Please complete all fields before saving the issue.");
+    }
+});
+
+const formattedDate = new Date(selectedIssue.issueDate).toLocaleDateString("en-GB");
+
+
+    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+     <script>
+        // Set today's date dynamically
+        document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+    </script>
+   
+
+</body>
+</html>
