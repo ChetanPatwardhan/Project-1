@@ -1,0 +1,23 @@
+Portfolio :
+
+https://chetan-portfolio-website-chetan-patwardhans-projects.vercel.app/
+
+GitHub : 
+
+https://github.com/ChetanPatwardhan
+
+LinkedId :
+
+https://www.linkedin.com/in/chetan-patwardhan-8831bb146?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BJ7wBZ3emQ%2FuYDggoXxC5ew%3D%3D
+
+
+
+
+https://jobs.smartrecruiters.com/WNSGlobalServices144/743999974390193-api-developer-vuram-india?trid=bb2572dc-93af-47bd-9bb1-9f049abba39c
+
+
+
+
+
+
+I am Chetan Patwardhan, a passionate software developer with expertise in full-stack development, embedded systems, cloud technologies, and API design. With a Bachelor’s in Computer Science & Engineering and a Master’s in Defence Technology, I thrive on creating innovative solutions for complex challenges. My technical skills include Core Java, Python, HTML5, CSS3, JavaScript, SQL, and frameworks like Angular, MERN Stack, and Spring Boot. I am proficient in cloud platforms such as Firebase, AWS, and Microsoft Azure, along with DevOps tools like Docker, Kubernetes, and Jenkins. I have successfully delivered various projects, including mission-critical embedded systems for AUVs and cloud-hosted solutions. I am also skilled in embedded systems with STM32 and Raspberry Pi Pico. Driven by curiosity and a commitment to innovation, I continuously seek to contribute impactful solutions in technology and research domains.
